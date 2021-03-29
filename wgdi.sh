@@ -1,0 +1,8 @@
+conda activate r40
+/gpfs1/deng_pkuhpc/deng_test/PJ/kiwi/poly4ass/customer_backup_Y543/04.HIC_Assembly/02.Chr_genome/Lachesis_assembly_changed.fa
+perl -0076 -ane '@F=map{s/[>\r\n]//gr}@F;$id=shift @F;print $id,qq{\t},length (join q{},@F),qq{\n} if $id'  /gpfs1/deng_pkuhpc/deng_test/PJ/kiwi/poly4ass/customer_backup_Y543/04.HIC_Assembly/02.Chr_genome/Lachesis_assembly_changed.fa > /gpfs1/deng_pkuhpc/deng_test/PJ/kiwi/poly4ass/result/wgdi/Lachesis.chr.length
+perl -lane 'next if /^#/;$count{$F[0]}++ if $F[2] eq "gene";END{print join qq{\t},$_,$count{$_} for sort keys %count}' /gpfs1/deng_pkuhpc/deng_test/PJ/kiwi/poly4ass/customer_backup_Y543/05.Annotation/02.gene_prediction/Chr_genome_final_gene.gff3 > /gpfs1/deng_pkuhpc/deng_test/PJ/kiwi/poly4ass/result/wgdi/Lachesis.gene.counts
+perl -lane 'if($flag){print join qq{\t},$_,$count{$F[0]}}else {$count{$F[0]}=$F[1]}$flag=1 if eof(ARGV)' Lachesis.gene.counts Lachesis.chr.length |sort -k1,1V > Lachesis.len
+awk -F"\t" '{if($1~ /Chr/){print $0}}' Lachesis.len >Lachesis.len2
+perl -lane 'next unless $F[2] eq "mRNA";/ID=([^;]+)/;push @geneInfo,[$F[0],$1,$F[3],$F[4],$F[6]];END{$preChr="";for(sort {$a->[0] cmp $b->[0] || $a->[2] <=> $b->[2]} @geneInfo){if($preChr ne $_->[0]){$c=0;$preChr=$_->[0]};print join qq{\t},@{$_},++$c}}' /gpfs1/deng_pkuhpc/deng_test/PJ/kiwi/poly4ass/customer_backup_Y543/05.Annotation/02.gene_prediction/Chr_genome_final_gene.gff3 > /gpfs1/deng_pkuhpc/deng_test/PJ/kiwi/poly4ass/result/wgdi/Lachesis.gff
+cp /lustre1/deng_pkuhpc/yuqinqin/reference/Hongyang_v3.0_update.gff3 /gpfs1/deng_pkuhpc/deng_test/PJ/kiwi/RF/hongyang_v3
